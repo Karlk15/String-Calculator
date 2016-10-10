@@ -22,11 +22,16 @@ public class StringCalculator {
         int sum = StringCalculator.add("1,2,3,4,5,6,7,8,9,10");
         log.println("Sum: "+sum);
     }
+    @Test
+    public final void TestStringWithNewLineInString() {
+        int sum = StringCalculator.add("1,2,3,4,5\n6,7,8,9,10");
+        log.println("Sum: "+sum);
+    }
 
     public static int add(String numbers)
     {
         int sum = 0;
-        String[] numberInArray = numbers.split(",");
+        String[] numberInArray = numbers.split(",|\n");
             for (String n : numberInArray)
             {
                 if(n.isEmpty())return 0;
