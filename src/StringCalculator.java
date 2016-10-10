@@ -56,37 +56,68 @@ public class StringCalculator {
             e.printStackTrace();
         }
     }
+    @Test
+    public final void TestIfNumberInStringOver1000IsIgnored() throws Exception
+    {
+        int sum = StringCalculator.add("1001,2");
+        log.println("Sum: "+sum);
+    }
+    @Test
+    public final void TestUndefinedDelimiter() throws Exception
+    {
+        int sum = StringCalculator.add("//;\n1;2");
+        log.println("Sum: "+sum);
+    }
+    @Test
+    public final void TestUndefinedDelimiter2() throws Exception
+    {
+        int sum = StringCalculator.add("//;;\n1;;2");
+        log.println("Sum: "+sum);
+    }
 
     public static int add(String numbers) throws Exception
     {
         int sum = 0;
-        String[] numberInArray = numbers.split(",|\n");
+        String delimiter = "";
+        if(numbers.startsWith("//"))
+        {
+            int delimiterStart = numbers.indexOf("//")+2;
+            int delimiterend = numbers.indexOf("\n");
+
+            delimiter = numbers.substring(delimiterStart,delimiterend)+"|";
+            int numberStart = numbers.indexOf("\n")+1;
+            numbers = numbers.substring(numberStart);
+        }
+
+        delimiter += ",|\n";
+        String[] numberInArray = numbers.split(delimiter);
+
         List<String> listNegNumbers = new ArrayList();
-            for (String n : numberInArray)
+        for (String n : numberInArray)
+        {
+            String nNegative = n;
+            if(n.isEmpty())
             {
-                String nNegative = n;
-                if(n.isEmpty())
-                {
-                    return 0;
-                }
-                if(Integer.parseInt(nNegative) < 0)
-                {
-                    listNegNumbers.add(nNegative);
-                }
-                else
-                {
-                    sum += Integer.parseInt(n);
-                }
+                return 0;
             }
-            if(!listNegNumbers.isEmpty())
+            if(Integer.parseInt(nNegative) < 0)
             {
-                String negativeNumbers = "";
-                for(String nNegative: listNegNumbers )
-                {
-                    negativeNumbers += nNegative+",";
-                }
-                throw new Exception("Negatives not allowed: "+ negativeNumbers);
+                listNegNumbers.add(nNegative);
             }
+            else if (Integer.parseInt(n) < 1000)
+            {
+                sum += Integer.parseInt(n);
+            }
+        }
+        if(!listNegNumbers.isEmpty())
+        {
+            String negativeNumbers = "";
+            for(String nNegative: listNegNumbers )
+            {
+                negativeNumbers += nNegative+",";
+            }
+            throw new Exception("Negatives not allowed: "+ negativeNumbers);
+        }
         return sum;
     }
 }
